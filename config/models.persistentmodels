@@ -16,3 +16,24 @@ Comment json -- Adding "json" causes ToJSON and FromJSON instances to be derived
     userId UserId Maybe
     deriving Eq
     deriving Show
+Users json
+    uuid           UUID sqltype=uuid default=uuid_generate_v4()
+    firstName      Text
+    lastName       Text
+    userName       Text
+    password       Text
+    about          Value sqltype=JSONB
+    createdAt      UTCTime
+    updatedAt      UTCTime
+    isDeleted      Bool
+    UniqueId       uuid
+    UniqueUserName userName
+    deriving       Show Eq Typeable
+Roles json
+    name Text
+    capability Text
+    deriving Show Eq Typeable
+UserRoles json
+    user UsersId
+    role RolesId
+    deriving Show Eq Typeable
