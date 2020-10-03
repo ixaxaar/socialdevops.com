@@ -5,7 +5,6 @@
 
 local.install: ## Prepare local installation
 	@curl -sSL https://get.haskellstack.org/ | sh
-	@stack install yesod-bin --install-ghc
 	@make local.build
 	@docker volume create --name=socialdevops_db
 
@@ -14,7 +13,7 @@ local.build: ## Build project
 
 local.start: ## Start the server on local
 	@source .envrc
-	@nodemon --watch src/ -e hs --signal SIGKILL --exec 'stack exec -- yesod devel --port ${APPLICATION_PORT} --tls-port ${APPLICATION_SSL_PORT} --host ${APPLICATION_HOST}'
+	@nodemon --watch src/ -e hs --signal SIGKILL --exec 'stack build && stack exec socialdevops-exe'
 
 local.watch: venv ## Start and watch the server on local
 	@make start
