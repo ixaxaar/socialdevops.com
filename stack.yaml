@@ -39,7 +39,12 @@ packages:
 # - git: https://github.com/commercialhaskell/stack.git
 #   commit: e7b331f14bcffb8367cd58fbfc8b40ec7642100a
 #
-# extra-deps: []
+
+extra-deps:
+- case-insensitive-1.2.0.11@sha256:ca2f237cba5db9c9c4238d41a7d8b583c5ca0ce8491de4027b26b17793fc3a87,2245
+- opentelemetry-0.6.1@sha256:d50fdb3f221e41150fe888571a361aaad1e524e281e6eee956b611af13a415ee,1414
+- opentelemetry-wai-0.6.1@sha256:f03e02fbe3da17c229828500ac378a09409d9f1720439846ed3b03896d673c56,1277
+- ghc-trace-events-0.1.2.1@sha256:2b7f9be840d748c3d33d0f70120a5d7614ef5862cb854efa272cd0c536319306,3117
 
 # Override default flag values for local packages and extra-deps
 # flags: {}

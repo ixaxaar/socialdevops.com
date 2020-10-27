@@ -22,8 +22,23 @@ dependencies:
 - base >= 4.7 && < 5
 - aeson
 - servant-server
-- wai
-- warp
+- wai >= 3.2.2.1
+- warp >= 3.3.13
+- bytestring
+- time
+- text
+- uuid
+- binary
+- case-insensitive == 1.2.0.11
+- http-types == 0.12.3
+- data-default == 0.7.1.1
+- wai-logger == 2.3.6
+- fast-logger == 3.0.1
+- wai-extra == 3.0.32
+- streaming-commons
+- transformers
+- opentelemetry == 0.6.1
+- opentelemetry-wai == 0.6.1
 
 library:
   source-dirs: src

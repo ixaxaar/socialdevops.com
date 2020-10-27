@@ -1,24 +1,25 @@
 module Config where
 
 import System.Environment ( lookupEnv )
-import System.IO
+import System.IO ()
 
-import Data.Maybe
+import Data.Maybe ()
 
-import Control.Monad.Trans.Maybe
+import Control.Monad.Trans.Maybe ()
 
-import Utils
-import Types
+import Utils ( getOrDefaultTo, toLowerString )
+import Types ( Environment(..) )
 
 environment :: IO String
 environment = getOrDefaultTo (lookupEnv "ENVIRONMENT") "development"
 
 parseEnv :: String -> Environment
-parseEnv s = case s of
-  x | elem x ["Development", "development", "dev"] -> Development
-  x | elem x ["Sandbox", "sandbox"]                -> Sandbox
-  x | elem x ["QA", "qa"]                          -> QA
-  x | elem x ["Production", "production", "prod"]  -> Production
+parseEnv s = case t of
+    x | elem x ["development", "dev"]          -> Development
+    x | elem x ["sandbox"]                     -> Sandbox
+    x | elem x ["qa"]                          -> QA
+    x | elem x ["production", "prod"]          -> Production
+  where t = toLowerString s
 
 applicationHost :: IO String
 applicationHost = getOrDefaultTo (lookupEnv "APPLICATION_HOST") "localhost"

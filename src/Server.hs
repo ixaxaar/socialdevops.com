@@ -1,29 +1,42 @@
 {-# LANGUAGE DataKinds       #-}
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE TypeOperators   #-}
+
 module Server
     ( startApp
     , app
     ) where
 
-import Data.Aeson
-import Data.Aeson.TH
-import Data.Streaming.Network.Internal
-import Data.UUID
-import Data.UUID.V4 as UUID
-import Data.CaseInsensitive as CI
-import Data.ByteString ( ByteString )
+import Data.Aeson ( defaultOptions )
+import Data.Aeson.TH ( deriveJSON )
+import Data.Streaming.Network.Internal ( HostPreference(Host) )
+import Data.CaseInsensitive as CI ()
 
-import Network.Wai as WAI
+import Network.Wai as WAI ( Application )
 import Network.Wai.Handler.Warp
-import Network.Wai.Middleware.RequestLogger
+    ( setHost,
+      setOnExceptionResponse,
+      setPort,
+      setTimeout,
+      runSettings,
+      defaultOnExceptionResponse,
+      defaultSettings,
+      exceptionResponseForDebug )
+import Network.Wai.Middleware.RequestLogger ()
 
 import Servant
+    ( Proxy(..), type (:>), Get, JSON, serve, Server )
 
-import Types
+import Types ( Environment(Development) )
 import Config
-import Logging
+    ( applicationHost, applicationPort, environment, parseEnv )
+import Logging ( makeLog )
+import Middleware
 
+import OpenTelemetry.Eventlog ()
+import qualified OpenTelemetry.Network.Wai.Middleware as WaiTelemetry
+import OpenTelemetry.Propagation ()
+import OpenTelemetry.SpanContext ()
 
 data User = User
   { userId        :: Int
@@ -46,19 +59,15 @@ startApp = do
 
   putStrLn $ "Starting server on " ++ host ++ ":" ++ (show portInt)
 
-  let settings = setPort portInt $ setHost (Host host) $ setTimeout 300 $ setOnExceptionResponse (if environ == Development then exceptionResponseForDebug else defaultOnExceptionResponse) defaultSettings
-  logger <- makeLog app environ
-  runSettings settings (logger app)
-
-
--- Request -> (Response -> IO ResponseReceived) -> IO ResponseReceived
--- addRequestId :: Middleware
--- addRequestId app req sendRes = do
-  -- reqId <- toASCIIBytes <$> UUID.nextRandom
-  -- let hs = ("Request-ID", reqId) : WAI.requestHeaders req
-  -- app (req { requestHeaders = (fromString "lol", "lel") : WAI.requestHeaders req }) sendRes
-  -- req { requestHeaders = ("REMOTE_USER", "lol") }
-  -- app (req { WAI.requestHeaders = hs }) sendRes
+  let settings =
+        setPort portInt $
+        setHost (Host host) $
+        setTimeout 300 $
+        setOnExceptionResponse (if environ == Development then exceptionResponseForDebug else defaultOnExceptionResponse)
+        defaultSettings
+  telemetryMiddleware <- WaiTelemetry.mkMiddleware
+  logger <- makeLog environ
+  runSettings settings (insertUUIDHeaderRequest . telemetryMiddleware . logger $ app)
 
 app :: Application
 app = serve api server
