@@ -10,7 +10,6 @@ module Server
 import Data.Aeson ( defaultOptions )
 import Data.Aeson.TH ( deriveJSON )
 import Data.Streaming.Network.Internal ( HostPreference(Host) )
-import Data.CaseInsensitive as CI ()
 
 import Network.Wai as WAI ( Application )
 import Network.Wai.Handler.Warp
@@ -32,11 +31,12 @@ import Config
     ( applicationHost, applicationPort, environment, parseEnv )
 import Logging ( makeLog )
 import Middleware
+-- import Routes
 
-import OpenTelemetry.Eventlog ()
 import qualified OpenTelemetry.Network.Wai.Middleware as WaiTelemetry
-import OpenTelemetry.Propagation ()
-import OpenTelemetry.SpanContext ()
+
+
+-----------------------------------------------------------------------------
 
 data User = User
   { userId        :: Int
@@ -47,6 +47,13 @@ data User = User
 $(deriveJSON defaultOptions ''User)
 
 type API = "users" :> Get '[JSON] [User]
+
+users :: [User]
+users = [ User 1 "Isaac" "Newton"
+        , User 2 "Albert" "Einstein"
+        ]
+
+-----------------------------------------------------------------------------
 
 startApp :: IO ()
 startApp = do
@@ -78,7 +85,3 @@ api = Proxy
 server :: Server API
 server = return users
 
-users :: [User]
-users = [ User 1 "Isaac" "Newton"
-        , User 2 "Albert" "Einstein"
-        ]

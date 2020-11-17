@@ -21,6 +21,7 @@ description:         Please see the README on GitHub at <https://github.com/gith
 dependencies:
 - base >= 4.7 && < 5
 - aeson
+- servant == 0.16.2
 - servant-server
 - wai >= 3.2.2.1
 - warp >= 3.3.13
@@ -41,12 +42,21 @@ dependencies:
 - opentelemetry-wai == 0.6.1
 
 library:
-  source-dirs: src
+  source-dirs:
+    - src
+    - src/resources
+    - src/repositories
+    - src/models
 
 executables:
   socialdevops-exe:
     main:                Main.hs
-    source-dirs:         app
+    source-dirs:
+    - app
+    - src
+    - src/resources
+    - src/repositories
+    - src/models
     ghc-options:
     - -threaded
     - -rtsopts
