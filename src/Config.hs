@@ -51,3 +51,11 @@ applicationPostgresPw = getOrDefaultTo (lookupEnv "APPLICATION_POSTGRES_PW") "so
 applicationDbPoolsize :: IO String
 applicationDbPoolsize = getOrDefaultTo (lookupEnv "APPLICATION_DB_POOLSIZE") "10"
 
+commitHash :: IO String
+commitHash = getOrDefaultTo (lookupEnv "COMMIT_HASH") "oh-no"
+
+majorVersion :: IO String
+majorVersion = getOrDefaultTo (lookupEnv "MAJOR_VERSION") "0"
+
+minorVersion :: IO String
+minorVersion = getOrDefaultTo (lookupEnv "MINOR_VERSION") "0"

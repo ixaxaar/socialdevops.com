@@ -31,29 +31,29 @@ import Config
     ( applicationHost, applicationPort, environment, parseEnv )
 import Logging ( makeLog )
 import Middleware
--- import Routes
+import Routes
 
 import qualified OpenTelemetry.Network.Wai.Middleware as WaiTelemetry
 
 
------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------------
 
-data User = User
-  { userId        :: Int
-  , userFirstName :: String
-  , userLastName  :: String
-  } deriving (Eq, Show)
+-- data User = User
+--   { userId        :: Int
+--   , userFirstName :: String
+--   , userLastName  :: String
+--   } deriving (Eq, Show)
 
-$(deriveJSON defaultOptions ''User)
+-- $(deriveJSON defaultOptions ''User)
 
-type API = "users" :> Get '[JSON] [User]
+-- -- type API = "users" :> Get '[JSON] [User]
 
-users :: [User]
-users = [ User 1 "Isaac" "Newton"
-        , User 2 "Albert" "Einstein"
-        ]
+-- users :: [User]
+-- users = [ User 1 "Isaac" "Newton"
+--         , User 2 "Albert" "Einstein"
+--         ]
 
------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------------
 
 startApp :: IO ()
 startApp = do
@@ -83,5 +83,5 @@ api :: Proxy API
 api = Proxy
 
 server :: Server API
-server = return users
+server = ?
 
