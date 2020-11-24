@@ -7,53 +7,28 @@ module Server
     , app
     ) where
 
+import Control.Monad.IO.Class
+
 import Data.Aeson ( defaultOptions )
 import Data.Aeson.TH ( deriveJSON )
 import Data.Streaming.Network.Internal ( HostPreference(Host) )
 
 import Network.Wai as WAI ( Application )
 import Network.Wai.Handler.Warp
-    ( setHost,
-      setOnExceptionResponse,
-      setPort,
-      setTimeout,
-      runSettings,
-      defaultOnExceptionResponse,
-      defaultSettings,
-      exceptionResponseForDebug )
 import Network.Wai.Middleware.RequestLogger ()
 
 import Servant
-    ( Proxy(..), type (:>), Get, JSON, serve, Server )
+import qualified OpenTelemetry.Network.Wai.Middleware as WaiTelemetry
 
-import Types ( Environment(Development) )
+import Types
 import Config
-    ( applicationHost, applicationPort, environment, parseEnv )
 import Logging ( makeLog )
 import Middleware
 import Routes
+import Thing
+import Version
 
-import qualified OpenTelemetry.Network.Wai.Middleware as WaiTelemetry
 
-
--- -----------------------------------------------------------------------------
-
--- data User = User
---   { userId        :: Int
---   , userFirstName :: String
---   , userLastName  :: String
---   } deriving (Eq, Show)
-
--- $(deriveJSON defaultOptions ''User)
-
--- -- type API = "users" :> Get '[JSON] [User]
-
--- users :: [User]
--- users = [ User 1 "Isaac" "Newton"
---         , User 2 "Albert" "Einstein"
---         ]
-
--- -----------------------------------------------------------------------------
 
 startApp :: IO ()
 startApp = do
@@ -83,5 +58,25 @@ api :: Proxy API
 api = Proxy
 
 server :: Server API
-server = ?
+server = getVersionHandler
+  :<|> getVersionHandler
+  :<|> getThingHandler
+  :<|> postThingHandler
+  :<|> patchThingHandler
+  :<|> deleteThingHandler
+  where
+    getThingHandler :: Int -> Handler Thing
+    getThingHandler x = return (getThing x)
+
+    postThingHandler :: ThingPostBody -> Handler Thing
+    postThingHandler x = return (postThing x)
+
+    patchThingHandler :: ThingPatchBody -> Handler Thing
+    patchThingHandler x = return (patchThing x)
+
+    deleteThingHandler :: ThingDeleteBody -> Handler Thing
+    deleteThingHandler x = return (deleteThing x)
+
+    getVersionHandler :: Handler Version
+    getVersionHandler = do liftIO getVersion
 

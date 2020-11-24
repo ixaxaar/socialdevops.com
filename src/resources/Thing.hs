@@ -4,10 +4,10 @@
 
 module Thing where
 
-import Data.Aeson ( FromJSON )
+import Data.Aeson
 import GHC.Generics
 
-data TypeOfThing = Stuff | Shit | Crap | NoThing deriving (Eq,Ord,Enum,Show)
+data TypeOfThing = Stuff | Shit | Crap | NoThing deriving (Eq,Ord,Enum,Show,Generic)
 
 data Thing = Thing {
   id   :: Int,
@@ -19,18 +19,26 @@ data ThingPostBody = ThingPostBody {
   name :: String,
   what :: Int
 } deriving Generic
-instance FromJSON ThingPostBody
 
 data ThingPatchBody = ThingPatchBody {
   name :: String,
   what :: Int
 } deriving Generic
-instance FromJSON ThingPatchBody
 
 data ThingDeleteBody = ThingDeleteBody {
   id   :: Int,
   name :: String
 } deriving Generic
+
+-- Instances to convert to/from json
+instance FromJSON TypeOfThing
+instance ToJSON TypeOfThing
+
+instance FromJSON Thing
+instance ToJSON Thing
+
+instance FromJSON ThingPostBody
+instance FromJSON ThingPatchBody
 instance FromJSON ThingDeleteBody
 
 ---------- Handlers
