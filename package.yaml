@@ -16,30 +16,39 @@ extra-source-files:
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/githubuser/socialdevops#readme>
+description:         Please see the README on GitHub at <https://github.com/githubuser/socialdevops#README.md>
 
 dependencies:
+# base
 - base >= 4.7 && < 5
-- aeson
-- servant == 0.16.2
-- servant-server
-- wai >= 3.2.2.1
-- warp >= 3.3.13
+# data
 - bytestring
 - time
 - text
+- case-insensitive
 - uuid
 - binary
-- case-insensitive == 1.2.0.11
-- http-types == 0.12.3
-- data-default == 0.7.1.1
-- wai-logger == 2.3.6
-- fast-logger == 3.0.1
-- wai-extra == 3.0.32
-- streaming-commons
+- aeson
+- data-default
+# control
 - transformers
+# HTTP
+- http-types
+- servant
+- servant-server
+- wai
+- warp
+- wai-extra
+- streaming-commons
+# logging
+- wai-logger
+- fast-logger
 - opentelemetry == 0.6.1
 - opentelemetry-wai == 0.6.1
+# DB
+- beam-core
+- beam-postgres
+- beam-migrate
 
 library:
   source-dirs:

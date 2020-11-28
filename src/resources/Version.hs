@@ -1,4 +1,4 @@
-{-# LANGUAGE DeriveGeneric         #-}
+{-# LANGUAGE DeriveGeneric #-}
 
 module Version where
 
@@ -6,6 +6,7 @@ import Data.Aeson
 import GHC.Generics
 
 import Config
+
 
 data Version = Version {
   hash  :: String,

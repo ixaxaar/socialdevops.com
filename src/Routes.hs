@@ -5,9 +5,8 @@ module Routes where
 
 import Servant.API
 
-import Types ( Bearer )
 import Thing
-import Version ( Version )
+import Version
 
 
 -- /api/version and /health
