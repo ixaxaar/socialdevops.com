@@ -7,7 +7,10 @@ module Thing where
 import Data.Aeson
 import GHC.Generics
 
-data TypeOfThing = Stuff | Shit | Crap | NoThing deriving (Eq,Ord,Enum,Show,Generic)
+import ThingTable
+
+
+data TypeOfThing = Stuff | Shit | Crap | NoThing deriving (Eq,Ord,Enum,Show,Read,Generic)
 
 data Thing = Thing {
   id   :: Int,

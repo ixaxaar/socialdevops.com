@@ -14,7 +14,6 @@ import Network.HTTP.Types.Header ()
 import Data.UUID ( toByteString )
 import Data.UUID.V4 as UUID ( nextRandom )
 import Data.Binary.Builder as Builder ()
-import Network.Wai (Response)
 
 
 insertUUIDHeaderRequest :: Middleware

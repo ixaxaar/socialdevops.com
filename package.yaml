@@ -27,11 +27,13 @@ dependencies:
 - text
 - case-insensitive
 - uuid
+- uuid-types
 - binary
 - aeson
 - data-default
 # control
 - transformers
+- lens
 # HTTP
 - http-types
 - servant
@@ -49,6 +51,7 @@ dependencies:
 - beam-core
 - beam-postgres
 - beam-migrate
+- postgresql-simple
 
 library:
   source-dirs:
