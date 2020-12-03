@@ -1,5 +1,6 @@
 {-# LANGUAGE DataKinds       #-}
 {-# LANGUAGE TypeOperators   #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Server
     ( startApp
@@ -7,10 +8,15 @@ module Server
     ) where
 
 import Control.Monad.IO.Class
+import Control.Lens
 
 import Data.Aeson ( defaultOptions )
 import Data.Aeson.TH ( deriveJSON )
 import Data.Streaming.Network.Internal ( HostPreference(Host) )
+import Data.Swagger hiding (Host)
+import Data.Swagger.Internal.Schema
+import Data.Function
+import Data.Text (Text)
 
 import Network.Wai as WAI ( Application )
 import Network.Wai.Handler.Warp
@@ -18,6 +24,7 @@ import Network.Wai.Middleware.RequestLogger ()
 
 import Servant
 import qualified OpenTelemetry.Network.Wai.Middleware as WaiTelemetry
+import Servant.Swagger
 
 import Types
 import Config
@@ -26,7 +33,6 @@ import Middleware
 import Routes
 import Thing
 import Version
-
 
 
 startApp :: IO ()
@@ -38,7 +44,7 @@ startApp = do
   let environ = parseEnv environment
   let portInt = read port :: Int
 
-  putStrLn $ "Starting server on " ++ host ++ ":" ++ (show portInt)
+  putStrLn $ "Starting server on " ++ host ++ ":" ++ show portInt
 
   let settings =
         setPort portInt $
@@ -51,13 +57,24 @@ startApp = do
   runSettings settings (insertUUIDHeaderRequest . telemetryMiddleware . logger $ app)
 
 app :: Application
-app = serve api server
+app = serve allAPI server
 
 api :: Proxy API
 api = Proxy
 
-server :: Server API
-server = getVersionHandler
+allAPI :: Proxy AllAPI
+allAPI = Proxy
+
+swaggerDocs :: Handler Swagger
+swaggerDocs = return $ toSwagger api
+  & info.title   .~ "arda-haskell"
+  & info.version .~ "1.0"
+  & info.description ?~ "Template APIs"
+  & info.license ?~ ("MIT" & url ?~ URL "http://mit.com")
+
+server :: Server AllAPI
+server = swaggerDocs
+  :<|> getVersionHandler
   :<|> getVersionHandler
   :<|> getThingHandler
   :<|> postThingHandler
@@ -78,4 +95,3 @@ server = getVersionHandler
 
     getVersionHandler :: Handler Version
     getVersionHandler = do liftIO getVersion
-

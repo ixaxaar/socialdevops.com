@@ -42,6 +42,9 @@ dependencies:
 - warp
 - wai-extra
 - streaming-commons
+# API specs
+- swagger2
+- servant-swagger
 # logging
 - wai-logger
 - fast-logger
